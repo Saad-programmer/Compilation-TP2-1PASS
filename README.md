@@ -1,81 +1,81 @@
-# Micro Language Compiler — Lexical & Syntactic Analyzer
+# Compilateur du Langage Micro — Analyseur Lexical et Syntaxique
 
 <div align="center">
 
-![Language](https://img.shields.io/badge/language-C-blue?style=for-the-badge&logo=c)
-![License](https://img.shields.io/badge/license-Academic-green?style=for-the-badge)
-![Status](https://img.shields.io/badge/status-Educational-orange?style=for-the-badge)
+![Langage](https://img.shields.io/badge/langage-C-blue?style=for-the-badge&logo=c)
+![Licence](https://img.shields.io/badge/licence-Académique-green?style=for-the-badge)
+![Statut](https://img.shields.io/badge/statut-Éducatif-orange?style=for-the-badge)
 ![Phase](https://img.shields.io/badge/phase-Lexer%20%2B%20Parser-purple?style=for-the-badge)
-![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20macOS%20%7C%20Windows-lightgrey?style=for-the-badge)
+![Plateforme](https://img.shields.io/badge/plateforme-Linux%20%7C%20macOS%20%7C%20Windows-lightgrey?style=for-the-badge)
 
-**A complete compiler front-end for the Micro language**
+**Un front-end complet de compilateur pour le langage Micro**
 
-*From character stream to validated syntax — lexical analysis and syntactic analysis in C*
+*Du flux de caractères à la syntaxe validée — analyse lexicale et analyse syntaxique en C*
 
-[Overview](#-overview) •
-[Architecture](#-architecture--design) •
-[Implementations](#-three-implementations-compared) •
-[Building](#-building-the-compiler) •
-[Theory](#-academic-background--theory) •
-[Extensions](#-suggested-extensions-for-further-research)
+[Aperçu](#-aperçu) •
+[Architecture](#-architecture--conception) •
+[Implémentations](#-trois-implémentations-comparées) •
+[Compilation](#-compilation-du-compilateur) •
+[Théorie](#-contexte-académique--théorie) •
+[Extensions](#-extensions-suggérées-pour-la-recherche)
 
 </div>
 
 ---
 
-## 📋 Table of Contents
+## 📋 Table des Matières
 
 <details>
-<summary>Click to expand</summary>
+<summary>Cliquez pour développer</summary>
 
-- [Overview](#-overview)
-- [Repository Structure](#-repository-structure)
-- [The Micro Language](#-the-micro-language)
-- [Token Specification](#-token-specification)
-- [Architecture & Design](#-architecture--design)
-- [Three Implementations Compared](#-three-implementations-compared)
-- [Detailed Code Walkthrough](#-detailed-code-walkthrough)
-- [Building the Compiler](#-building-the-compiler)
-- [Running the Analyzers](#-running-the-analyzers)
-- [Sample Inputs & Expected Outputs](#-sample-inputs--expected-outputs)
-- [Error Handling & Recovery](#-error-handling--recovery)
-- [Comparison with Real Compilers](#-comparison-with-real-compilers)
-- [Academic Background & Theory](#-academic-background--theory)
-- [Limitations & Known Issues](#-limitations--known-issues)
-- [Suggested Extensions](#-suggested-extensions-for-further-research)
-- [Testing Strategy](#-testing-strategy)
-- [License & Acknowledgments](#-license--acknowledgments)
-- [Quick Reference Card](#-quick-reference-card)
+- [Aperçu](#-aperçu)
+- [Structure du Dépôt](#-structure-du-dépôt)
+- [Le Langage Micro](#-le-langage-micro)
+- [Spécification des Tokens](#-spécification-des-tokens)
+- [Architecture & Conception](#-architecture--conception)
+- [Trois Implémentations Comparées](#-trois-implémentations-comparées)
+- [Analyse Détaillée du Code](#-analyse-détaillée-du-code)
+- [Compilation du Compilateur](#-compilation-du-compilateur)
+- [Exécution des Analyseurs](#-exécution-des-analyseurs)
+- [Exemples d'Entrées & Sorties Attendues](#-exemples-dentrées--sorties-attendues)
+- [Gestion et Récupération des Erreurs](#-gestion-et-récupération-des-erreurs)
+- [Comparaison avec les Compilateurs Réels](#-comparaison-avec-les-compilateurs-réels)
+- [Contexte Académique & Théorie](#-contexte-académique--théorie)
+- [Limitations & Problèmes Connus](#-limitations--problèmes-connus)
+- [Extensions Suggérées](#-extensions-suggérées-pour-la-recherche)
+- [Stratégie de Test](#-stratégie-de-test)
+- [Licence & Remerciements](#-licence--remerciements)
+- [Carte de Référence Rapide](#-carte-de-référence-rapide)
 
 </details>
 
 ---
 
-## 🔍 Overview
+## 🔍 Aperçu
 
-This repository contains **three related C programs** that progressively implement the front-end of a compiler for the **Micro** language, spanning two major phases of compilation:
+Ce dépôt contient **trois programmes C apparentés** qui implémentent progressivement le front-end d'un compilateur pour le langage **Micro**, couvrant deux phases majeures de la compilation :
 
-1. **Lexical analysis** (scanner/tokenizer) — converting raw characters into tokens.
-2. **Syntactic analysis** (parser) — checking that the token stream conforms to the Micro grammar.
+1. **Analyse lexicale** (scanner/tokenizer) — conversion des caractères bruts en tokens.
+2. **Analyse syntaxique** (parser) — vérification que le flux de tokens est conforme à la grammaire Micro.
 
-### The Three Implementations
+### Les Trois Implémentations
 
-| File | Role | Output |
-|------|------|--------|
-| 📄 `essay.c` | Scanner only — tokenizes input, writes token names to file | `monoutput.txt` |
-| 📄 `version.c` | Scanner + recursive-descent parser (streaming) | `voutput.txt` |
-| 📄 `TP2.c` | One-pass scanner + parser, buffered in RAM | `outputFinal.txt` |
+| Fichier | Rôle | Sortie |
+|---------|------|--------|
+| 📄 `essay.c` | Scanner uniquement — tokenise l'entrée, écrit les noms de tokens dans un fichier | `monoutput.txt` |
+| 📄 `version.c` | Scanner + parseur à descente récursive (streaming) | `voutput.txt` |
+| 📄 `TP2.c` | Scanner + parseur en une passe, tamponné en RAM | `outputFinal.txt` |
 
-> All three share the same **lexical core** (identifiers, integers, keywords, operators, comments) but differ in **how they handle output, buffering, and parsing**.
+> Les trois partagent le même **cœur lexical** (identificateurs, entiers, mots-clés, opérateurs, commentaires) mais diffèrent dans **la gestion de la sortie, du buffering et du parsing**.
 
-### Compilation Pipeline
+### Pipeline de Compilation
 
 ```mermaid
 graph LR
     A[input.txt] --> B[SCANNER]
-    B --> C[Token Stream]
+    B --> C[Flux de Tokens]
     C --> D[PARSER]
-    D --> E[Validated Syntax]
+    D --> E[Syntaxe Validée]
     B --> F[outputFinal.txt]
     D --> F
     
@@ -86,33 +86,33 @@ graph LR
 
 ---
 
-## 📁 Repository Structure
+## 📁 Structure du Dépôt
 
 ```
 .
-├── 📄 essay.c            # Scanner-only implementation
-├── 🔧 essay              # Compiled binary for essay.c
-├── 📝 input.txt          # Test input (with deliberate errors)
-├── 📤 monoutput.txt      # Output of essay (scanner only)
-├── 📤 outputFinal.txt    # Output of TP2 (scanner + parser)
-├── 📄 TP2.c              # One-pass scanner + parser (in-memory buffers)
-├── 🔧 TP2-1              # Compiled binary for TP2.c
-├── 🔧 TP2                # Alternate binary
-├── 📄 version.c          # Scanner + parser (streaming, two tokens lookahead)
-├── 🔧 version            # Compiled binary for version.c
-├── 📤 voutput.txt        # Output of version (empty in current repo)
-└── 📦 repomix-output.xml # Packed representation of the repository
+├── 📄 essay.c            # Implémentation scanner uniquement
+├── 🔧 essay              # Binaire compilé pour essay.c
+├── 📝 input.txt          # Entrée de test (avec erreurs délibérées)
+├── 📤 monoutput.txt      # Sortie de essay (scanner uniquement)
+├── 📤 outputFinal.txt    # Sortie de TP2 (scanner + parseur)
+├── 📄 TP2.c              # Scanner + parseur en une passe (tampons en mémoire)
+├── 🔧 TP2-1              # Binaire compilé pour TP2.c
+├── 🔧 TP2                # Binaire alternatif
+├── 📄 version.c          # Scanner + parseur (streaming, deux tokens de lookahead)
+├── 🔧 version            # Binaire compilé pour version.c
+├── 📤 voutput.txt        # Sortie de version (vide dans le dépôt actuel)
+└── 📦 repomix-output.xml # Représentation packagée du dépôt
 ```
 
-> **Note:** Binary files (`essay`, `TP2`, `TP2-1`, `version`) are compiled artifacts and are excluded from the packed representation. Only source and text outputs are included.
+> **Remarque :** Les fichiers binaires (`essay`, `TP2`, `TP2-1`, `version`) sont des artefacts compilés et sont exclus de la représentation packagée. Seuls les sources et les sorties texte sont inclus.
 
 ---
 
-## 🔤 The Micro Language
+## 🔤 Le Langage Micro
 
-Micro is a minimal imperative language used in compiler-construction courses, notably inspired by the language in *Compiler Construction: Principles and Practice* by **Kenneth C. Louden**.
+Micro est un langage impératif minimal utilisé dans les cours de construction de compilateurs, notamment inspiré du langage de *Compiler Construction: Principles and Practice* de **Kenneth C. Louden**.
 
-### Grammar
+### Grammaire
 
 ```ebnf
 program     → "begin" stmt_list "end"
@@ -127,29 +127,29 @@ id_list     → id { "," id }
 expr_list   → expr { "," expr }
 ```
 
-### Lexical Conventions
+### Conventions Lexicales
 
-| Element | Pattern | Example |
-|---------|---------|---------|
-| Keyword | reserved word *(case-insensitive in TP2)* | `begin`, `END` |
-| Identifier | `letter (letter \| digit \| _)*` | `x`, `var1`, `_t` |
-| Integer | `digit+` | `52`, `0`, `120` |
-| Float | `digit+ . digit+ [exponent]` | `13.7`, `5e-2` |
-| Assignment | `:=` | `:=` |
-| Plus / Minus | `+` / `-` | `+`, `-` |
-| Parens | `(` / `)` | `(`, `)` |
-| Semicolon | `;` | `;` |
-| Comma | `,` | `,` |
-| Comment | `--` … end of line | `-- this is ok` |
-| Whitespace | space, tab, newline | *(ignored)* |
+| Élément | Motif | Exemple |
+|---------|-------|---------|
+| Mot-clé | mot réservé *(insensible à la casse dans TP2)* | `begin`, `END` |
+| Identificateur | `lettre (lettre \| chiffre \| _)*` | `x`, `var1`, `_t` |
+| Entier | `chiffre+` | `52`, `0`, `120` |
+| Flottant | `chiffre+ . chiffre+ [exposant]` | `13.7`, `5e-2` |
+| Affectation | `:=` | `:=` |
+| Plus / Moins | `+` / `-` | `+`, `-` |
+| Parenthèses | `(` / `)` | `(`, `)` |
+| Point-virgule | `;` | `;` |
+| Virgule | `,` | `,` |
+| Commentaire | `--` … fin de ligne | `-- ceci est ok` |
+| Espace blanc | espace, tabulation, saut de ligne | *(ignoré)* |
 
-> ⚠️ **Note:** `essay.c` and `version.c` do **not** support floats; only `TP2.c` does. This is a key difference and a nice pedagogical example of language evolution.
+> ⚠️ **Remarque :** `essay.c` et `version.c` ne supportent **pas** les flottants ; seul `TP2.c` le fait. C'est une différence clé et un bon exemple pédagogique d'évolution du langage.
 
 ---
 
-## 🏷️ Token Specification
+## 🏷️ Spécification des Tokens
 
-Tokens are defined as an `enum` in C. `essay.c` and `version.c` use a 14-token enum; `TP2.c` extends it with `FLOATLITERAL`:
+Les tokens sont définis comme un `enum` en C. `essay.c` et `version.c` utilisent un enum de 14 tokens ; `TP2.c` l'étend avec `FLOATLITERAL` :
 
 ```c
 /* essay.c / version.c */
@@ -162,19 +162,19 @@ typedef enum {
     assignop, scan_eof
 } token;
 
-/* TP2.c adds: */
+/* TP2.c ajoute : */
 typedef enum {
     BEGIN, END, READ, WRITE,
     ID, INTLITERAL, LPAREN, RPAREN,
     SEMICOLON, COMMA, ASSIGNOP,
     PLUSOP, MINUSOP, SCANEOF,
-    FLOATLITERAL   /* ← new */
+    FLOATLITERAL   /* ← nouveau */
 } token;
 ```
 
-Each token has a **type** and, for identifiers/literals, an associated **lexeme** stored in `token_buffer` (essay/version) or `buffer` (TP2).
+Chaque token a un **type** et, pour les identificateurs/littéraux, un **lexème** associé stocké dans `token_buffer` (essay/version) ou `buffer` (TP2).
 
-### Token Display Names (TP2)
+### Noms d'Affichage des Tokens (TP2)
 
 ```c
 char tokens[15][15] = {
@@ -186,121 +186,121 @@ char tokens[15][15] = {
 
 ---
 
-## 🏗️ Architecture & Design
+## 🏗️ Architecture & Conception
 
-The three implementations share a common **hand-written scanner** design, but differ in **buffering strategy** and **parser integration**.
+Les trois implémentations partagent une conception commune de **scanner écrit à la main**, mais diffèrent dans la **stratégie de buffering** et l'**intégration du parseur**.
 
-### `essay.c` — Scanner Only
+### `essay.c` — Scanner Uniquement
 
 ```mermaid
 flowchart LR
     A[main] --> B[scanner]
     B --> C[token_name]
-    C --> D[fprintf to output]
+    C --> D[fprintf vers sortie]
 ```
 
-- Reads source, writes a flat list of token names to `monoutput.txt`.
-- Uses `fgetc`/`ungetc` for one-character lookahead.
-- **No parser.**
+- Lit la source, écrit une liste plate de noms de tokens dans `monoutput.txt`.
+- Utilise `fgetc`/`ungetc` pour un lookahead d'un caractère.
+- **Pas de parseur.**
 
-### `version.c` — Scanner + Parser (Streaming)
+### `version.c` — Scanner + Parseur (Streaming)
 
 ```mermaid
 flowchart TD
     A[main] --> B[next_token = scanner]
     B --> C[current_token = next_token]
     C --> D[next_token = scanner]
-    D --> E[system_goal - recursive descent]
+    D --> E[system_goal - descente récursive]
 ```
 
-- Uses a **two-token lookahead** scheme: `current_token` and `next_token`.
-- Parser recurses through `program → inst_list → inst → expr → prim`.
-- Does **not** buffer tokens; reads directly from the file.
-- On error, skips forward to avoid infinite loops.
+- Utilise un **lookahead de deux tokens** : `current_token` et `next_token`.
+- Le parseur récurse à travers `program → inst_list → inst → expr → prim`.
+- Ne **tamponne pas** les tokens ; lit directement depuis le fichier.
+- En cas d'erreur, avance pour éviter les boucles infinies.
 
-### `TP2.c` — One-Pass, In-Memory Buffers
+### `TP2.c` — Une Passe, Tampons en Mémoire
 
 ```mermaid
 flowchart TD
-    A[system_goal] --> B[program - recursive descent]
-    B --> C[buffers tokens into resultat]
-    B --> D[buffers errors into messages]
-    C --> E[write BOTH at end to outputFinal.txt]
+    A[system_goal] --> B[program - descente récursive]
+    B --> C[tamponne les tokens dans resultat]
+    B --> D[tamponne les erreurs dans messages]
+    C --> E[écrit TOUT à la fin dans outputFinal.txt]
     D --> E
 ```
 
-- **One pass** over `input.txt`.
-- Token list and error messages are **accumulated in RAM** (`char resultat[MAX_RESULT]`, `char messages[MAX_MSG]`).
-- At the end, writes everything to `outputFinal.txt` in two sections:
-  1. **Lexical result** — the token stream.
-  2. **Syntactic result** — number of errors and detailed messages.
+- **Une seule passe** sur `input.txt`.
+- La liste des tokens et les messages d'erreur sont **accumulés en RAM** (`char resultat[MAX_RESULT]`, `char messages[MAX_MSG]`).
+- À la fin, écrit tout dans `outputFinal.txt` en deux sections :
+  1. **Résultat lexical** — le flux de tokens.
+  2. **Résultat syntaxique** — nombre d'erreurs et messages détaillés.
 
-> 💡 This is the most "modern" of the three: it mirrors how real compilers collect diagnostics and emit them at the end, rather than interleaving them with the token stream.
+> 💡 C'est le plus « moderne » des trois : il reflète la façon dont les compilateurs réels collectent les diagnostics et les émettent à la fin, plutôt que de les entrelacer avec le flux de tokens.
 
-### Flow of Control (TP2 — Most Complete)
+### Flux de Contrôle (TP2 — Le Plus Complet)
 
 ```
 main()
   └─► system_goal()
         ├─► fopen("input.txt")
         ├─► program()
-        │     ├─► next_token() ─► scanner()  (reads file, buffers token)
+        │     ├─► next_token() ─► scanner()  (lit le fichier, tamponne le token)
         │     ├─► match(BEGIN)
         │     ├─► inst_list()
-        │     │     └─► inst()  (ID/READ/WRITE dispatch)
+        │     │     └─► inst()  (dispatch ID/READ/WRITE)
         │     │           └─► expression() ─► prim() ─► match(...)
         │     └─► match(END)
         ├─► match(SCANEOF)
         └─► fopen("outputFinal.txt")
-              ├─► fprintf(resultat)    // lexical result
-              └─► fprintf(messages)    // syntactic result
+              ├─► fprintf(resultat)    // résultat lexical
+              └─► fprintf(messages)    // résultat syntaxique
 ```
 
 ---
 
-## ⚖️ Three Implementations Compared
+## ⚖️ Trois Implémentations Comparées
 
-| Feature | `essay.c` | `version.c` | `TP2.c` |
-|---------|:---------:|:-----------:|:-------:|
+| Fonctionnalité | `essay.c` | `version.c` | `TP2.c` |
+|----------------|:---------:|:-----------:|:-------:|
 | **Scanner** | ✅ | ✅ | ✅ |
-| **Parser** | ❌ | ✅ | ✅ |
-| **Float literals** | ❌ | ❌ | ✅ |
-| **Keyword case-insensitivity** | ❌ | ❌ | ✅ |
-| **Output style** | Flat token list | *(empty in repo)* | Two-section report |
-| **Buffering** | Direct file writes | Direct file writes | In-memory buffers |
-| **Lookahead** | 1 char (`ungetc`) | 2 tokens | 1 token + newline marker |
-| **Error count limit** | None | ✅ (>50 stops) | ✅ (`nb_erreurs`) |
-| **Newline preservation** | ❌ | ❌ | ✅ |
-| **`#` handling** | Lexical error | Lexical error | Lexical error |
-| **`=` alone** | Lexical error | Lexical error | Lexical error |
-| **Comments `--`** | ✅ | ✅ | ✅ |
-| **Exponent floats `5e-2`** | ❌ | ❌ | ✅ |
-| **`.5` leading-dot floats** | ❌ | ❌ | ✅ |
+| **Parseur** | ❌ | ✅ | ✅ |
+| **Littéraux flottants** | ❌ | ❌ | ✅ |
+| **Insensibilité à la casse des mots-clés** | ❌ | ❌ | ✅ |
+| **Style de sortie** | Liste plate de tokens | *(vide dans le dépôt)* | Rapport en deux sections |
+| **Buffering** | Écritures directes dans le fichier | Écritures directes dans le fichier | Tampons en mémoire |
+| **Lookahead** | 1 caractère (`ungetc`) | 2 tokens | 1 token + marqueur de nouvelle ligne |
+| **Limite d'erreurs** | Aucune | ✅ (>50 arrête) | ✅ (`nb_erreurs`) |
+| **Préservation des nouvelles lignes** | ❌ | ❌ | ✅ |
+| **Gestion de `#`** | Erreur lexicale | Erreur lexicale | Erreur lexicale |
+| **`=` seul** | Erreur lexicale | Erreur lexicale | Erreur lexicale |
+| **Commentaires `--`** | ✅ | ✅ | ✅ |
+| **Flottants avec exposant `5e-2`** | ❌ | ❌ | ✅ |
+| **Flottants à point initial `.5`** | ❌ | ❌ | ✅ |
 
-### Key Takeaway
+### Point Clé
 
-> 🏆 **`TP2.c`** is the **most feature-complete** and **closest to a real compiler front-end**: it handles floats, is case-insensitive for keywords, buffers diagnostics, and separates lexical from syntactic reporting.
+> 🏆 **`TP2.c`** est le plus **complet** et le plus **proche d'un vrai front-end de compilateur** : il gère les flottants, est insensible à la casse pour les mots-clés, tamponne les diagnostics et sépare le reporting lexical du syntaxique.
 >
-> 📘 **`essay.c`** is the minimal scanner.
+> 📘 **`essay.c`** est le scanner minimal.
 >
-> 🔄 **`version.c`** is an intermediate step that introduces parsing but keeps streaming I/O.
+> 🔄 **`version.c`** est une étape intermédiaire qui introduit le parsing mais conserve l'I/O en streaming.
 
 ---
 
-## 📖 Detailed Code Walkthrough
+## 📖 Analyse Détaillée du Code
 
-### 1. Scanner Core (Shared by All Three)
+### 1. Cœur du Scanner (Partagé par les Trois)
 
-The scanner uses:
+Le scanner utilise :
 
-| Technique | Purpose |
-|-----------|---------|
-| `fgetc(source)` | Character-by-character input |
-| `ungetc(c, source)` | One-character lookahead |
-| Token buffer | `token_buffer[256]` (essay/version), `buffer[MAX]` (TP2) |
-| Line counter | `line_number` or `ligneid` |
+| Technique | Objectif |
+|-----------|----------|
+| `fgetc(source)` | Entrée caractère par caractère |
+| `ungetc(c, source)` | Lookahead d'un caractère |
+| Tampon de token | `token_buffer[256]` (essay/version), `buffer[MAX]` (TP2) |
+| Compteur de ligne | `line_number` ou `ligneid` |
 
-#### Identifier Scanning
+#### Analyse des Identificateurs
 
 ```c
 if (isalpha(in_char)) {
@@ -312,7 +312,7 @@ if (isalpha(in_char)) {
 }
 ```
 
-This implements the DFA:
+Ceci implémente le DFA :
 
 ```mermaid
 stateDiagram-v2
@@ -322,7 +322,7 @@ stateDiagram-v2
     q1 --> [*]
 ```
 
-#### Integer Scanning
+#### Analyse des Entiers
 
 ```c
 else if (isdigit(in_char)) {
@@ -334,14 +334,14 @@ else if (isdigit(in_char)) {
 }
 ```
 
-#### Float Scanning (TP2 Only)
+#### Analyse des Flottants (TP2 Uniquement)
 
 ```c
 if (isdigit(c)) {
     buffer_char(c);
     c = fgetc(f);
-    read_number(f, &c);          // consume digits
-    if (c == '.') {              // fractional part
+    read_number(f, &c);          // consomme les chiffres
+    if (c == '.') {              // partie fractionnaire
         c = fgetc(f);
         if (isdigit(c)) {
             buffer_char('.');
@@ -351,7 +351,7 @@ if (isdigit(c)) {
             return INTLITERAL;
         }
     }
-    if (c == 'e' || c == 'E') {  // exponent
+    if (c == 'e' || c == 'E') {  // exposant
         c = fgetc(f);
         exposant(f, &c);
         return FLOATLITERAL;
@@ -361,16 +361,16 @@ if (isdigit(c)) {
 }
 ```
 
-Handles:
+Gère :
 
-| Input | Token |
-|-------|-------|
+| Entrée | Token |
+|--------|-------|
 | `123` | `INTLITERAL` |
 | `13.7` | `FLOATLITERAL` |
 | `5e-2` | `FLOATLITERAL` |
 | `.5` | `FLOATLITERAL` |
 
-#### Comment Handling
+#### Gestion des Commentaires
 
 ```c
 if (c == '-') {
@@ -388,11 +388,11 @@ if (c == '-') {
 }
 ```
 
-#### Keyword Recognition
+#### Reconnaissance des Mots-Clés
 
 ```c
 token check_reserved() {
-    to_maj();                          // uppercase the buffer (TP2 only)
+    to_maj();                          // met le tampon en majuscules (TP2 uniquement)
     if (strcmp(buffer, "BEGIN") == 0) return BEGIN;
     if (strcmp(buffer, "END")   == 0) return END;
     if (strcmp(buffer, "READ")  == 0) return READ;
@@ -401,14 +401,14 @@ token check_reserved() {
 }
 ```
 
-> `essay.c` and `version.c` compare against lowercase only; `TP2.c` uppercases first, making keywords case-insensitive.
+> `essay.c` et `version.c` comparent uniquement en minuscules ; `TP2.c` met d'abord en majuscules, rendant les mots-clés insensibles à la casse.
 
-### 2. Parser (Recursive Descent)
+### 2. Parseur (Descente Récursive)
 
-All parsers are **recursive descent** with one token of lookahead. The grammar is directly transcribed into functions:
+Tous les parseurs sont à **descente récursive** avec un token de lookahead. La grammaire est directement transcrite en fonctions :
 
-| Grammar Rule | Function |
-|--------------|----------|
+| Règle de Grammaire | Fonction |
+|--------------------|----------|
 | `<system_goal>` | `system_goal()` |
 | `<program>` | `program()` |
 | `<inst_list>` | `inst_list()` |
@@ -419,7 +419,7 @@ All parsers are **recursive descent** with one token of lookahead. The grammar i
 | `<add_op>` | `add_op()` |
 | `<prim>` | `prim()` |
 
-#### `match` — The Heart of the Parser
+#### `match` — Le Cœur du Parseur
 
 ```c
 void match(token t) {
@@ -434,10 +434,10 @@ void match(token t) {
 }
 ```
 
-- If the current token matches, advance.
-- If not, record an error but **do not consume** the offending token — a form of **error recovery** that avoids cascading errors.
+- Si le token courant correspond, on avance.
+- Sinon, on enregistre une erreur mais on **ne consomme pas** le token fautif — une forme de **récupération d'erreur** qui évite les erreurs en cascade.
 
-#### `prim` — With Error Recovery (TP2)
+#### `prim` — Avec Récupération d'Erreur (TP2)
 
 ```c
 void prim() {
@@ -459,15 +459,15 @@ void prim() {
 }
 ```
 
-> 🎯 This is **panic-mode recovery**: on an unexpected token, skip forward until a **synchronization token** (`)`, `,`, `;`, `end`, EOF) is found. This is exactly the strategy described in the **Dragon Book** (Section 4.1.3).
+> 🎯 C'est la **récupération en mode panique** : en cas de token inattendu, on saute vers l'avant jusqu'à un **token de synchronisation** (`)`, `,`, `;`, `end`, EOF). C'est exactement la stratégie décrite dans le **Dragon Book** (Section 4.1.3).
 
-### 3. Output Buffering (TP2)
+### 3. Tampon de Sortie (TP2)
 
 ```c
-char resultat[MAX_RESULT];      // token stream
+char resultat[MAX_RESULT];      // flux de tokens
 int  resultat_len = 0;
 
-char messages[MAX_MSG];         // syntax error messages
+char messages[MAX_MSG];         // messages d'erreur syntaxique
 int  messages_len = 0;
 
 void ajouter_resultat(const char *s) {
@@ -479,7 +479,7 @@ void ajouter_resultat(const char *s) {
 }
 ```
 
-Both buffers are appended to with `strcpy` (equivalent to `strcat`, but avoids recomputing `strlen`). At the end of `system_goal()`, both are written to `outputFinal.txt`:
+Les deux tampons sont complétés avec `strcpy` (équivalent à `strcat`, mais évite de recalculer `strlen`). À la fin de `system_goal()`, les deux sont écrits dans `outputFinal.txt` :
 
 ```c
 fprintf(final, "===== RESULTAT DE L'ANALYSE LEXICALE =====\n");
@@ -494,41 +494,41 @@ if (nb_erreurs == 0) {
 }
 ```
 
-> 💡 **Design Note:** This is a **one-pass** design: the file is read once, and all results are collected in RAM. Real compilers often do this to avoid re-reading the source and to produce a complete diagnostic report at the end.
+> 💡 **Note de Conception :** C'est une conception **en une passe** : le fichier est lu une fois, et tous les résultats sont collectés en RAM. Les compilateurs réels font souvent cela pour éviter de relire la source et pour produire un rapport de diagnostic complet à la fin.
 
 ---
 
-## 🔨 Building the Compiler
+## 🔨 Compilation du Compilateur
 
-### Prerequisites
+### Prérequis
 
-| Requirement | Details |
-|-------------|---------|
-| **Compiler** | GCC, Clang, or MSVC |
-| **Build Tool** | *(Optional)* `make` |
+| Exigence | Détails |
+|----------|---------|
+| **Compilateur** | GCC, Clang ou MSVC |
+| **Outil de build** | *(Optionnel)* `make` |
 | **Shell** | POSIX-like (Linux, macOS, WSL, Git Bash) |
 
 ### Compilation
 
-#### Scanner Only (`essay.c`)
+#### Scanner Uniquement (`essay.c`)
 
 ```bash
 gcc -Wall -Wextra -O2 -o essay essay.c
 ```
 
-#### Scanner + Parser (`version.c`)
+#### Scanner + Parseur (`version.c`)
 
 ```bash
 gcc -Wall -Wextra -O2 -o version version.c
 ```
 
-#### One-Pass Compiler (`TP2.c`)
+#### Compilateur en Une Passe (`TP2.c`)
 
 ```bash
 gcc -Wall -Wextra -O2 -o TP2 TP2.c
 ```
 
-#### Debug Builds (Recommended for Academic Work)
+#### Builds de Débogage (Recommandés pour le Travail Académique)
 
 ```bash
 gcc -Wall -Wextra -g -fsanitize=address,undefined -o essay_dbg essay.c
@@ -536,7 +536,7 @@ gcc -Wall -Wextra -g -fsanitize=address,undefined -o version_dbg version.c
 gcc -Wall -Wextra -g -fsanitize=address,undefined -o TP2_dbg TP2.c
 ```
 
-> ✅ **Highly recommended** for academic work: detects buffer overflows and undefined behavior.
+> ✅ **Fortement recommandé** pour le travail académique : détecte les débordements de tampon et les comportements indéfinis.
 
 #### Windows (MinGW)
 
@@ -546,7 +546,7 @@ gcc -Wall -Wextra -O2 -o version.exe version.c
 gcc -Wall -Wextra -O2 -o TP2.exe TP2.c
 ```
 
-### Optional Makefile
+### Makefile Optionnel
 
 ```make
 CC      = gcc
@@ -576,30 +576,30 @@ clean:
 
 ---
 
-## 🚀 Running the Analyzers
+## 🚀 Exécution des Analyseurs
 
-### Scanner Only (`essay`)
+### Scanner Uniquement (`essay`)
 
 ```bash
 ./essay input.txt monoutput.txt
 cat monoutput.txt
 ```
 
-### Scanner + Parser (`version`)
+### Scanner + Parseur (`version`)
 
 ```bash
 ./version input.txt voutput.txt
 cat voutput.txt
 ```
 
-### One-Pass Compiler (`TP2`)
+### Compilateur en Une Passe (`TP2`)
 
 ```bash
 ./TP2
 cat outputFinal.txt
 ```
 
-> ⚠️ **Note:** `TP2` has **no CLI arguments** — it reads `input.txt` and writes `outputFinal.txt` by convention (hardcoded paths).
+> ⚠️ **Remarque :** `TP2` n'a **pas d'arguments CLI** — il lit `input.txt` et écrit `outputFinal.txt` par convention (chemins codés en dur).
 
 ### Windows
 
@@ -611,9 +611,9 @@ TP2.exe
 
 ---
 
-## 📊 Sample Inputs & Expected Outputs
+## 📊 Exemples d'Entrées & Sorties Attendues
 
-### Input: `input.txt`
+### Entrée : `input.txt`
 
 ```micro
 BEGIN
@@ -633,9 +633,9 @@ var:=6:=9;
 END
 ```
 
-> 🎯 This is a **deliberately error-rich** input designed to test lexical and syntactic error handling.
+> 🎯 C'est une entrée **délibérément riche en erreurs**, conçue pour tester la gestion des erreurs lexicales et syntaxiques.
 
-### Output of `essay` (`monoutput.txt`, Abridged)
+### Sortie de `essay` (`monoutput.txt`, Abrégée)
 
 ```
 ID
@@ -646,12 +646,12 @@ ID *** ERREUR LEXICALE '=' *** INTLITERAL ID MINUSOP INTLITERAL PLUSOP LPAREN IN
 SCANEOF
 ```
 
-**Observations:**
-- `13.7` is tokenized as `INTLITERAL PLUSOP INTLITERAL` with a `.` lexical error — because `essay.c` does not support floats.
-- `=` alone is a lexical error (only `:=` is a valid assignment operator).
-- `#` is a lexical error.
+**Observations :**
+- `13.7` est tokenisé comme `INTLITERAL PLUSOP INTLITERAL` avec une erreur lexicale `.` — car `essay.c` ne supporte pas les flottants.
+- `=` seul est une erreur lexicale (seul `:=` est un opérateur d'affectation valide).
+- `#` est une erreur lexicale.
 
-### Output of `TP2` (`outputFinal.txt`)
+### Sortie de `TP2` (`outputFinal.txt`)
 
 ```
 ===== RESULTAT DE L'ANALYSE LEXICALE =====
@@ -669,38 +669,38 @@ Erreur de syntaxe ligne 2 : attendu RPAREN
 ...
 ```
 
-**Observations:**
-- `13.7` is now correctly tokenized as `FLOATLITERAL`.
-- `5e-2` is recognized as `FLOATLITERAL`.
-- 28 syntactic errors are reported, each with line number and expected token.
-- The parser recovers and continues after each error.
+**Observations :**
+- `13.7` est maintenant correctement tokenisé comme `FLOATLITERAL`.
+- `5e-2` est reconnu comme `FLOATLITERAL`.
+- 28 erreurs syntaxiques sont signalées, chacune avec le numéro de ligne et le token attendu.
+- Le parseur se rétablit et continue après chaque erreur.
 
-### Why the Two Outputs Differ
+### Pourquoi les Deux Sorties Diffèrent
 
-| Input Fragment | `essay.c` (No Floats) | `TP2.c` (Floats + Case-Insensitive) |
-|----------------|----------------------|-------------------------------------|
-| `13.7` | `INT(13)` `.`-error `INT(7)` | `FLOATLITERAL` |
+| Fragment d'Entrée | `essay.c` (Sans Flottants) | `TP2.c` (Flottants + Insensible à la Casse) |
+|-------------------|----------------------------|---------------------------------------------|
+| `13.7` | `INT(13)` erreur `.` `INT(7)` | `FLOATLITERAL` |
 | `5e-2` | `INT(5)` `ID(e)` `MINUSOP` `INT(2)` | `FLOATLITERAL` |
-| `WRITE` | `ID` (lowercase compare fails) | `WRITE` (uppercased) |
+| `WRITE` | `ID` (comparaison minuscule échoue) | `WRITE` (mis en majuscules) |
 | `write` | `ID` | `WRITE` |
 
-> 💡 This is a **great teaching moment**: lexical rules directly determine what the parser sees, and a small change in the scanner (float support, case-insensitivity) dramatically changes the diagnostic output.
+> 💡 C'est un **excellent moment pédagogique** : les règles lexicales déterminent directement ce que voit le parseur, et un petit changement dans le scanner (support des flottants, insensibilité à la casse) change radicalement la sortie de diagnostic.
 
 ---
 
-## 🛠️ Error Handling & Recovery
+## 🛠️ Gestion et Récupération des Erreurs
 
-### Lexical Errors
+### Erreurs Lexicales
 
-- Reported with line number and offending character.
-- The scanner **continues** after the error (does not `exit`).
-- In `TP2`, lexical errors are appended to `messages[]` and counted in `nb_erreurs`.
+- Signalées avec le numéro de ligne et le caractère fautif.
+- Le scanner **continue** après l'erreur (ne fait pas `exit`).
+- Dans `TP2`, les erreurs lexicales sont ajoutées à `messages[]` et comptées dans `nb_erreurs`.
 
-### Syntactic Errors
+### Erreurs Syntaxiques
 
-Three strategies are visible across the three implementations:
+Trois stratégies sont visibles à travers les trois implémentations :
 
-#### 1. `version.c` — Skip on Mismatch
+#### 1. `version.c` — Saut en Cas de Non-Correspondance
 
 ```c
 void match(token expected) {
@@ -717,10 +717,10 @@ void match(token expected) {
 }
 ```
 
-- Simple but can **cascade**: a single missing token produces many errors.
-- Caps errors at 50 to avoid infinite loops.
+- Simple mais peut **cascader** : un seul token manquant produit de nombreuses erreurs.
+- Limite les erreurs à 50 pour éviter les boucles infinies.
 
-#### 2. `TP2.c` — Panic-Mode Recovery
+#### 2. `TP2.c` — Récupération en Mode Panique
 
 ```c
 while (courant != RPAREN && courant != COMMA &&
@@ -730,188 +730,188 @@ while (courant != RPAREN && courant != COMMA &&
 }
 ```
 
-- Skips tokens until a **synchronization point** (`)`, `,`, `;`, `end`, EOF).
-- This is the classic **panic-mode** strategy from the Dragon Book.
+- Saute des tokens jusqu'à un **point de synchronisation** (`)`, `,`, `;`, `end`, EOF).
+- C'est la stratégie classique du **mode panique** du Dragon Book.
 
-#### 3. `TP2.c` — No Consumption on Mismatch
+#### 3. `TP2.c` — Pas de Consommation en Cas de Non-Correspondance
 
-`match()` records the error but does **not** consume the offending token. This avoids skipping valid tokens and reduces cascading errors.
+`match()` enregistre l'erreur mais ne **consomme pas** le token fautif. Cela évite de sauter des tokens valides et réduit les erreurs en cascade.
 
-### Comparison with Real Compilers
+### Comparaison avec les Compilateurs Réels
 
-| Strategy | This Project | GCC / Clang | javac |
-|----------|--------------|-------------|-------|
-| Lexical error | Print + continue | Print + continue | Print + continue |
-| Syntactic error | Panic-mode (TP2) | Panic-mode + recovery sets | Panic-mode + recovery |
-| Error limit | 50 (version) | Configurable | Configurable |
-| Error messages | Line number | Line + column + caret | Line + column + caret |
-| Multiple errors | ✅ | ✅ | ✅ |
-| Error severity | Single level | Warning/Error/Fatal | Warning/Error/Fatal |
+| Stratégie | Ce Projet | GCC / Clang | javac |
+|-----------|-----------|-------------|-------|
+| Erreur lexicale | Affiche + continue | Affiche + continue | Affiche + continue |
+| Erreur syntaxique | Mode panique (TP2) | Mode panique + ensembles de récupération | Mode panique + récupération |
+| Limite d'erreurs | 50 (version) | Configurable | Configurable |
+| Messages d'erreur | Numéro de ligne | Ligne + colonne + caret | Ligne + colonne + caret |
+| Erreurs multiples | ✅ | ✅ | ✅ |
+| Sévérité d'erreur | Niveau unique | Warning/Error/Fatal | Warning/Error/Fatal |
 
 ---
 
-## ⚖️ Comparison with Real Compilers
+## ⚖️ Comparaison avec les Compilateurs Réels
 
-| Aspect | This Project | GCC / Clang / MSVC | javac |
-|--------|--------------|-------------------|-------|
-| **Lexer** | Hand-written | Hand-written (GCC), table-driven (Clang) | Hand-written (Unicode-aware) |
-| **Parser** | Recursive descent | Hand-written + generated (Bison for GCC) | Recursive descent |
-| **Lookahead** | 1 char + 1 token | 1–2 tokens, sometimes arbitrary | Arbitrary via `Reader` |
-| **Keyword lookup** | Linear `strcmp` | Perfect hash / trie | Hash table |
-| **Buffer management** | Fixed (256 / MAX) | Growable, memory-mapped | Growable |
-| **Float support** | ✅ (TP2 only) | ✅ Full (hex, suffixes, NaN, Inf) | ✅ Full (hex, suffixes, underscores) |
-| **Unicode** | ❌ ASCII only | ✅ UTF-8/UTF-16/UTF-32 | ✅ Full Unicode |
-| **Error recovery** | Panic-mode | Panic-mode + recovery sets | Panic-mode + recovery |
-| **Diagnostics** | Line only | Line + column + file + caret | Line + column + file + caret |
-| **AST** | ❌ (no tree built) | ✅ Full AST | ✅ Full AST |
-| **Symbol table** | ❌ | ✅ | ✅ |
-| **Type checking** | ❌ | ✅ | ✅ |
+| Aspect | Ce Projet | GCC / Clang / MSVC | javac |
+|--------|-----------|-------------------|-------|
+| **Lexer** | Écrit à la main | Écrit à la main (GCC), piloté par table (Clang) | Écrit à la main (Unicode-aware) |
+| **Parseur** | Descente récursive | Écrit à la main + généré (Bison pour GCC) | Descente récursive |
+| **Lookahead** | 1 caractère + 1 token | 1–2 tokens, parfois arbitraire | Arbitraire via `Reader` |
+| **Recherche de mots-clés** | `strcmp` linéaire | Hash parfait / trie | Table de hachage |
+| **Gestion de tampon** | Fixe (256 / MAX) | Extensible, mappé en mémoire | Extensible |
+| **Support des flottants** | ✅ (TP2 uniquement) | ✅ Complet (hex, suffixes, NaN, Inf) | ✅ Complet (hex, suffixes, underscores) |
+| **Unicode** | ❌ ASCII uniquement | ✅ UTF-8/UTF-16/UTF-32 | ✅ Unicode complet |
+| **Récupération d'erreur** | Mode panique | Mode panique + ensembles de récupération | Mode panique + récupération |
+| **Diagnostics** | Ligne uniquement | Ligne + colonne + fichier + caret | Ligne + colonne + fichier + caret |
+| **AST** | ❌ (aucun arbre construit) | ✅ AST complet | ✅ AST complet |
+| **Table des symboles** | ❌ | ✅ | ✅ |
+| **Vérification de type** | ❌ | ✅ | ✅ |
 | **IR / codegen** | ❌ | ✅ | ✅ (bytecode) |
-| **Optimization** | ❌ | ✅ (hundreds of passes) | ✅ (JIT + AOT) |
-| **Performance** | ~µs per token | ~ns per token (SIMD) | ~ns per token |
-| **Testing** | Manual | Massive suites, fuzzing | Massive suites, JCK |
+| **Optimisation** | ❌ | ✅ (centaines de passes) | ✅ (JIT + AOT) |
+| **Performance** | ~µs par token | ~ns par token (SIMD) | ~ns par token |
+| **Tests** | Manuels | Suites massives, fuzzing | Suites massives, JCK |
 | **Standard** | Ad-hoc | ISO C / ISO C++ | JLS |
 
-### Deeper Comparisons
+### Comparaisons Approfondies
 
-#### 1. Recursive Descent vs. Generated Parsers
+#### 1. Descente Récursive vs. Parseurs Générés
 
-| Compiler | Parser Style |
-|----------|-------------|
-| **This project** | Recursive descent — each grammar rule becomes a function |
-| **GCC** | Bison-generated LALR parser (with hand-written lexer) |
-| **Clang** | Hand-written recursive-descent parser with backtracking |
-| **javac** | Recursive descent with `TreeMaker` building an AST |
+| Compilateur | Style de Parseur |
+|-------------|-----------------|
+| **Ce projet** | Descente récursive — chaque règle de grammaire devient une fonction |
+| **GCC** | Parseur LALR généré par Bison (avec lexer écrit à la main) |
+| **Clang** | Parseur à descente récursive écrit à la main avec backtracking |
+| **javac** | Descente récursive avec `TreeMaker` construisant un AST |
 
-Recursive descent is preferred in modern compilers because:
-- It is easy to debug and extend.
-- It handles context-sensitive constructs (e.g., C++ `>>`) naturally.
-- Error messages can be much better than generated parsers.
+La descente récursive est préférée dans les compilateurs modernes car :
+- Elle est facile à déboguer et à étendre.
+- Elle gère naturellement les constructions sensibles au contexte (ex. `>>` en C++).
+- Les messages d'erreur peuvent être bien meilleurs que ceux des parseurs générés.
 
-> ✅ This project aligns with **modern practice** by using recursive descent.
+> ✅ Ce projet s'aligne sur la **pratique moderne** en utilisant la descente récursive.
 
-#### 2. One-Pass vs. Multi-Pass
+#### 2. Une Passe vs. Multi-Passes
 
-| Program | Passes |
-|---------|--------|
-| `TP2.c` | **One-pass**: scanner and parser interleaved |
-| `essay.c` | **Scanner-only** (zero passes of parsing) |
-| Real compilers | **Multi-pass**: lexing, parsing, semantic analysis, IR, optimization, codegen |
+| Programme | Passes |
+|-----------|--------|
+| `TP2.c` | **Une passe** : scanner et parseur entrelacés |
+| `essay.c` | **Scanner uniquement** (zéro passe de parsing) |
+| Compilateurs réels | **Multi-passes** : lexing, parsing, analyse sémantique, IR, optimisation, codegen |
 
-> Even "one-pass" compilers like early Pascal compilers (Turbo Pascal) used the one-pass model, but modern compilers separate phases for modularity.
+> Même les compilateurs « en une passe » comme les premiers compilateurs Pascal (Turbo Pascal) utilisaient le modèle en une passe, mais les compilateurs modernes séparent les phases pour la modularité.
 
-#### 3. Float Literal Recognition
+#### 3. Reconnaissance des Littéraux Flottants
 
-| Form | This Project (TP2) | GCC / Clang | javac |
-|------|:------------------:|:-----------:|:-----:|
+| Forme | Ce Projet (TP2) | GCC / Clang | javac |
+|-------|:---------------:|:-----------:|:-----:|
 | `13.7` | ✅ | ✅ | ✅ |
 | `.5` | ✅ | ✅ | ✅ |
 | `5e-2` | ✅ | ✅ | ✅ |
-| `0x1.8p3` | ❌ | ✅ (hex float) | ✅ (hex float) |
-| `1_000_000` | ❌ | ❌ (C23 adds it) | ✅ (underscores) |
-| `1.0f` | ❌ | ✅ (suffix) | ✅ (`f`/`d` suffix) |
+| `0x1.8p3` | ❌ | ✅ (flottant hex) | ✅ (flottant hex) |
+| `1_000_000` | ❌ | ❌ (C23 l'ajoute) | ✅ (underscores) |
+| `1.0f` | ❌ | ✅ (suffixe) | ✅ (suffixe `f`/`d`) |
 | `NaN`, `Inf` | ❌ | ✅ | ✅ |
 
-#### 4. Keyword Case Sensitivity
+#### 4. Sensibilité à la Casse des Mots-Clés
 
-| Program | Case Sensitivity |
-|---------|------------------|
-| `TP2.c` | **Case-insensitive** (`BEGIN`, `begin`, `Begin` all work) |
-| `essay.c` / `version.c` | **Case-sensitive** (lowercase only) |
-| **Pascal** | Case-insensitive |
-| **C, C++, Java, Python** | Case-sensitive |
+| Programme | Sensibilité à la Casse |
+|-----------|------------------------|
+| `TP2.c` | **Insensible** (`BEGIN`, `begin`, `Begin` fonctionnent) |
+| `essay.c` / `version.c` | **Sensible** (minuscules uniquement) |
+| **Pascal** | Insensible à la casse |
+| **C, C++, Java, Python** | Sensible à la casse |
 
-> Real compilers make this an explicit language-design choice, not an implementation detail.
+> Les compilateurs réels font de ceci un choix explicite de conception du langage, pas un détail d'implémentation.
 
 ---
 
-## 📚 Academic Background & Theory
+## 📚 Contexte Académique & Théorie
 
-### Compiler Phases
+### Phases du Compilateur
 
-A compiler is traditionally divided into:
+Un compilateur est traditionnellement divisé en :
 
-1. **Lexical analysis** — characters → tokens
-2. **Syntax analysis** — tokens → parse tree / AST
-3. **Semantic analysis** — type checking, scope resolution
-4. **Intermediate code generation** — AST → IR
-5. **Optimization** — IR → IR
-6. **Code generation** — IR → machine code
+1. **Analyse lexicale** — caractères → tokens
+2. **Analyse syntaxique** — tokens → arbre de parsing / AST
+3. **Analyse sémantique** — vérification de type, résolution de portée
+4. **Génération de code intermédiaire** — AST → IR
+5. **Optimisation** — IR → IR
+6. **Génération de code** — IR → code machine
 
-> This project covers **phases 1 and 2**.
+> Ce projet couvre les **phases 1 et 2**.
 
-### Formal Languages
+### Langages Formels
 
-| Level | Language Class | Recognizer |
-|-------|---------------|------------|
-| Lexical structure | **Regular language** | DFA |
-| Syntactic structure | **Context-free language** | PDA / recursive descent |
+| Niveau | Classe de Langage | Reconnaisseur |
+|--------|-------------------|---------------|
+| Structure lexicale | **Langage régulier** | DFA |
+| Structure syntaxique | **Langage hors-contexte** | PDA / descente récursive |
 
-### Regular Expressions for Micro Tokens
+### Expressions Régulières pour les Tokens Micro
 
-| Token | Regular Expression |
-|-------|-------------------|
+| Token | Expression Régulière |
+|-------|---------------------|
 | `BEGIN` | `[bB][eE][gG][iI][nN]` |
 | `ID` | `[a-zA-Z][a-zA-Z0-9_]*` |
 | `INTLITERAL` | `[0-9]+` |
 | `FLOATLITERAL` | `[0-9]+(\.[0-9]+)?([eE][+-]?[0-9]+)?` |
 | `ASSIGNOP` | `:=` |
-| comment | `--[^\n]*` |
+| commentaire | `--[^\n]*` |
 
-The grammar is **LL(1)** — parseable with one token of lookahead using recursive descent.
+La grammaire est **LL(1)** — analysable avec un token de lookahead en descente récursive.
 
-### The Maximal Munch Rule
+### La Règle du Plus Long Match
 
-The scanner follows **maximal munch**: it consumes as many characters as possible while matching a token.
+Le scanner suit le **plus long match** (maximal munch) : il consomme autant de caractères que possible tout en correspondant à un token.
 
-| Input | Tokenization | Reason |
-|-------|--------------|--------|
-| `:=` | `ASSIGNOP` | Preferred over `:` then `=` |
-| `13.7` | `FLOATLITERAL` | Not `INT(13)` `.` `INT(7)` |
-| `5e-2` | `FLOATLITERAL` | Not `INT(5)` `ID(e)` `MINUSOP` `INT(2)` |
+| Entrée | Tokenisation | Raison |
+|--------|--------------|--------|
+| `:=` | `ASSIGNOP` | Préféré à `:` puis `=` |
+| `13.7` | `FLOATLITERAL` | Pas `INT(13)` `.` `INT(7)` |
+| `5e-2` | `FLOATLITERAL` | Pas `INT(5)` `ID(e)` `MINUSOP` `INT(2)` |
 
-### Panic-Mode Error Recovery
+### Récupération en Mode Panique
 
-From the Dragon Book (Section 4.1.3):
+Du Dragon Book (Section 4.1.3) :
 
-> **Panic-mode recovery**: On discovering an error, the parser discards input tokens until one of a designated set of **synchronization tokens** is found.
+> **Récupération en mode panique** : en découvrant une erreur, le parseur rejette les tokens d'entrée jusqu'à ce que l'un d'un ensemble désigné de **tokens de synchronisation** soit trouvé.
 
-> 🎯 `TP2.c` implements exactly this: it skips tokens until `)`, `,`, `;`, `end`, or EOF.
+> 🎯 `TP2.c` implémente exactement ceci : il saute des tokens jusqu'à `)`, `,`, `;`, `end`, ou EOF.
 
-### References
+### Références
 
-1. Aho, A. V., Lam, M. S., Sethi, R., & Ullman, J. D. (2006). *Compilers: Principles, Techniques, and Tools* (2nd ed.). Pearson. — **The Dragon Book**.
-2. Louden, K. C. (1997). *Compiler Construction: Principles and Practice*. PWS Publishing. — Origin of the Micro language.
+1. Aho, A. V., Lam, M. S., Sethi, R., & Ullman, J. D. (2006). *Compilers: Principles, Techniques, and Tools* (2nd ed.). Pearson. — **Le Dragon Book**.
+2. Louden, K. C. (1997). *Compiler Construction: Principles and Practice*. PWS Publishing. — Origine du langage Micro.
 3. Levine, J. R. (2009). *Flex & Bison*. O'Reilly Media.
 4. Parr, T. (2013). *The Definitive ANTLR 4 Reference*. Pragmatic Bookshelf.
-5. GCC source: `libcpp/lex.c`, `gcc/cp/parser.c`.
-6. Clang source: `clang/lib/Lex/Lexer.cpp`, `clang/lib/Parse/ParseExpr.cpp`.
-7. OpenJDK source: `src/jdk.compiler/share/classes/com/sun/tools/javac/parser/`.
+5. Source GCC : `libcpp/lex.c`, `gcc/cp/parser.c`.
+6. Source Clang : `clang/lib/Lex/Lexer.cpp`, `clang/lib/Parse/ParseExpr.cpp`.
+7. Source OpenJDK : `src/jdk.compiler/share/classes/com/sun/tools/javac/parser/`.
 
 ---
 
-## ⚠️ Limitations & Known Issues
+## ⚠️ Limitations & Problèmes Connus
 
-| # | Issue | Fix |
-|---|-------|-----|
-| 1 | **No AST construction** — neither parser builds an AST | Add AST node types, build in `prim`/`expression`/`inst` |
-| 2 | **No symbol table** — identifiers not recorded | Add a hash table for identifiers |
-| 3 | **No type checking** — `var := (1+2)-7` accepted regardless of types | Add a semantic analyzer |
-| 4 | **Fixed-size buffers** — `resultat[MAX_RESULT]` / `messages[MAX_MSG]` can overflow silently | Use dynamic buffers |
-| 5 | **O(n²) buffer append** in essay/version — `buffer_char` calls `strlen` per character | Keep an index |
-| 6 | **Only one char of `ungetc` guaranteed** by C standard | Respect the constraint (already done) |
-| 7 | **No column tracking** — only `line_number` / `ligneid` | Track column too |
-| 8 | **Global state** — all programs use globals | Encapsulate in `struct Scanner` / `struct Parser` |
-| 9 | **`TP2.c` hardcoded paths** — `input.txt` / `outputFinal.txt` | Accept CLI arguments |
-| 10 | **No handling of `*`, `/`, `=`, `<`, `>`** | Extend grammar and scanner |
-| 11 | **`essay.c` / `version.c` do not support floats** | Backport the float logic from TP2 |
-| 12 | **`essay.c` / `version.c` are case-sensitive for keywords** | Add `to_maj()` as in TP2 |
+| # | Problème | Correction |
+|---|----------|------------|
+| 1 | **Pas de construction d'AST** — aucun parseur ne construit d'AST | Ajouter des types de nœuds AST, construire dans `prim`/`expression`/`inst` |
+| 2 | **Pas de table des symboles** — les identificateurs ne sont pas enregistrés | Ajouter une table de hachage pour les identificateurs |
+| 3 | **Pas de vérification de type** — `var := (1+2)-7` accepté indépendamment des types | Ajouter un analyseur sémantique |
+| 4 | **Tampons de taille fixe** — `resultat[MAX_RESULT]` / `messages[MAX_MSG]` peuvent déborder silencieusement | Utiliser des tampons dynamiques |
+| 5 | **Ajout O(n²) au tampon** dans essay/version — `buffer_char` appelle `strlen` par caractère | Garder un index |
+| 6 | **Un seul caractère de `ungetc` garanti** par le standard C | Respecter la contrainte (déjà fait) |
+| 7 | **Pas de suivi de colonne** — seulement `line_number` / `ligneid` | Suivre aussi la colonne |
+| 8 | **État global** — tous les programmes utilisent des globales | Encapsuler dans `struct Scanner` / `struct Parser` |
+| 9 | **Chemins codés en dur de `TP2.c`** — `input.txt` / `outputFinal.txt` | Accepter des arguments CLI |
+| 10 | **Pas de gestion de `*`, `/`, `=`, `<`, `>`** | Étendre la grammaire et le scanner |
+| 11 | **`essay.c` / `version.c` ne supportent pas les flottants** | Porter la logique des flottants depuis TP2 |
+| 12 | **`essay.c` / `version.c` sont sensibles à la casse pour les mots-clés** | Ajouter `to_maj()` comme dans TP2 |
 
 ---
 
-## 🔬 Suggested Extensions for Further Research
+## 🔬 Extensions Suggérées pour la Recherche
 
-### 1. Build an AST
+### 1. Construire un AST
 
 ```c
 typedef struct Node {
@@ -927,25 +927,25 @@ typedef struct Node {
 } Node;
 ```
 
-Build it in `prim`, `expression`, `inst`. Then write a pretty-printer.
+Construisez-le dans `prim`, `expression`, `inst`. Puis écrivez un pretty-printer.
 
-### 2. Add a Symbol Table
+### 2. Ajouter une Table des Symboles
 
-Hash table mapping identifier names to types and scopes. Detect:
-- Undeclared variables
-- Redeclared variables
-- Unused variables
+Table de hachage associant les noms d'identificateurs aux types et portées. Détecter :
+- Variables non déclarées
+- Variables redéclarées
+- Variables inutilisées
 
-### 3. Add Type Checking
+### 3. Ajouter la Vérification de Type
 
-Extend Micro with `int` and `float` types. Implement a type checker that:
-- Promotes `int` to `float` in mixed expressions
-- Rejects `float := int` if narrowing is disallowed
-- Reports type errors with line numbers
+Étendre Micro avec les types `int` et `float`. Implémenter un vérificateur de type qui :
+- Promeut `int` en `float` dans les expressions mixtes
+- Rejette `float := int` si le rétrécissement est interdit
+- Signale les erreurs de type avec les numéros de ligne
 
-### 4. Generate Intermediate Code
+### 4. Générer du Code Intermédiaire
 
-Emit three-address code (TAC):
+Émettre du code à trois adresses (TAC) :
 
 ```
 t1 = 5 + 13.7
@@ -953,76 +953,76 @@ t2 = t1
 var1 = t2
 ```
 
-Then write an interpreter for the TAC.
+Puis écrire un interpréteur pour le TAC.
 
-### 5. Add a Lexer Generator
+### 5. Ajouter un Générateur de Lexer
 
-Implement a small **Lex**-like tool:
-- Input: regular expressions
-- Output: a DFA transition table
-- Compare performance with the hand-written scanner
+Implémenter un petit outil **type Lex** :
+- Entrée : expressions régulières
+- Sortie : table de transition DFA
+- Comparer les performances avec le scanner écrit à la main
 
-### 6. Benchmark Against Real Compilers
+### 6. Comparer avec les Compilateurs Réels
 
-Profile with `perf` or `valgrind --tool=callgrind`. Compare tokens/sec with GCC on a large C file.
+Profiler avec `perf` ou `valgrind --tool=callgrind`. Comparer tokens/sec avec GCC sur un grand fichier C.
 
-### 7. Fuzz Testing
+### 7. Tests par Fuzzing
 
-Use **AFL** or **libFuzzer** to fuzz the scanner/parser. Find crashes and buffer overflows.
+Utiliser **AFL** ou **libFuzzer** pour fuzzer le scanner/parseur. Trouver des crashes et des débordements de tampon.
 
-### 8. Formal Verification
+### 8. Vérification Formelle
 
-Model the parser in **Coq** or **TLA+**. Prove:
-- Every accepted input is in the language
-- The parser always terminates
+Modéliser le parseur en **Coq** ou **TLA+**. Prouver :
+- Chaque entrée acceptée appartient au langage
+- Le parseur termine toujours
 
-### 9. Better Error Recovery
+### 9. Meilleure Récupération d'Erreur
 
-Implement **phrase-level recovery** and **error productions**. Compare with the strategies in the Dragon Book.
+Implémenter la **récupération au niveau phrase** et les **productions d'erreur**. Comparer avec les stratégies du Dragon Book.
 
-### 10. Parallel Scanning
+### 10. Scan Parallèle
 
-Split the input into chunks and scan concurrently. Reassemble tokens at boundaries.
+Diviser l'entrée en morceaux et scanner en parallèle. Réassembler les tokens aux frontières.
 
-### 11. Incremental Parsing
+### 11. Parsing Incrémental
 
-Re-parse only the changed region of a file — useful for IDEs.
+Re-parser uniquement la région modifiée d'un fichier — utile pour les IDE.
 
-### 12. Emit Diagnostics in JSON
+### 12. Émettre des Diagnostics en JSON
 
-Modern IDEs (VS Code, Eclipse) consume structured diagnostics. Emit JSON instead of plain text.
+Les IDE modernes (VS Code, Eclipse) consomment des diagnostics structurés. Émettre du JSON au lieu de texte brut.
 
 ---
 
-## 🧪 Testing Strategy
+## 🧪 Stratégie de Test
 
-### Unit Tests
+### Tests Unitaires
 
-Create `.micro` files, each testing one feature:
+Créer des fichiers `.micro`, chacun testant une fonctionnalité :
 
-| File | Tests |
-|------|-------|
+| Fichier | Tests |
+|---------|-------|
 | `test_keywords.micro` | `begin`, `end`, `read`, `write` |
-| `test_ids.micro` | Identifiers with `_` and digits |
-| `test_ints.micro` | Integers, leading zeros |
+| `test_ids.micro` | Identificateurs avec `_` et chiffres |
+| `test_ints.micro` | Entiers, zéros en tête |
 | `test_floats.micro` | `13.7`, `.5`, `5e-2`, `1.5E+3` |
 | `test_ops.micro` | `:=`, `+`, `-` |
 | `test_punct.micro` | `(`, `)`, `;`, `,` |
-| `test_comments.micro` | `--` comments |
-| `test_errors.micro` | Illegal characters |
-| `test_empty.micro` | Empty file |
-| `test_eof.micro` | File without trailing newline |
+| `test_comments.micro` | Commentaires `--` |
+| `test_errors.micro` | Caractères illégaux |
+| `test_empty.micro` | Fichier vide |
+| `test_eof.micro` | Fichier sans nouvelle ligne finale |
 
-### Golden Tests
+### Tests de Référence (Golden)
 
-Store expected outputs and diff:
+Stocker les sorties attendues et comparer :
 
 ```bash
 ./essay test_keywords.micro out.txt
 diff out.txt expected/test_keywords.out
 ```
 
-### Sanitizer Tests
+### Tests avec Sanitizers
 
 ```bash
 make debug
@@ -1037,93 +1037,93 @@ afl-gcc -o essay_afl essay.c
 afl-fuzz -i seeds/ -o findings/ ./essay_afl @@ /dev/null
 ```
 
-### Continuous Integration
+### Intégration Continue
 
-Add `.github/workflows/ci.yml` to build and test on Linux, macOS, and Windows.
+Ajouter `.github/workflows/ci.yml` pour compiler et tester sur Linux, macOS et Windows.
 
 ---
 
-## 📜 License & Acknowledgments
+## 📜 Licence & Remerciements
 
-This project is an educational implementation of a compiler front-end for the **Micro** language, inspired by:
+Ce projet est une implémentation éducative d'un front-end de compilateur pour le langage **Micro**, inspiré par :
 
 - Kenneth C. Louden, *Compiler Construction: Principles and Practice*.
 - Aho, Lam, Sethi, Ullman, *Compilers: Principles, Techniques, and Tools*.
 
-It is intended for **academic use**. Feel free to fork, extend, and use it in courses on compiler construction.
+Il est destiné à un **usage académique**. N'hésitez pas à forker, étendre et utiliser dans des cours de construction de compilateurs.
 
-### Suggested Citation
+### Citation Suggérée
 
 ```bibtex
 @misc{micro_compiler,
-  title  = {Micro Language Compiler — Lexical and Syntactic Analyzer},
-  author = {Anonymous},
+  title  = {Compilateur du Langage Micro — Analyseur Lexical et Syntaxique},
+  author = {Anonyme},
   year   = {2024},
-  note   = {Educational compiler front-end in C},
+  note   = {Front-end de compilateur éducatif en C},
   url    = {https://github.com/example/micro-compiler}
 }
 ```
 
 ---
 
-## 🗂️ Quick Reference Card
+## 🗂️ Carte de Référence Rapide
 
-### Build Commands
+### Commandes de Compilation
 
 ```bash
-# Build all
+# Tout compiler
 gcc -Wall -Wextra -O2 -o essay essay.c
 gcc -Wall -Wextra -O2 -o version version.c
 gcc -Wall -Wextra -O2 -o TP2 TP2.c
 
-# Run scanner only
+# Exécuter le scanner uniquement
 ./essay input.txt monoutput.txt
 
-# Run scanner + parser (streaming)
+# Exécuter le scanner + parseur (streaming)
 ./version input.txt voutput.txt
 
-# Run one-pass compiler (hardcoded paths)
+# Exécuter le compilateur en une passe (chemins codés en dur)
 ./TP2
 cat outputFinal.txt
 
-# Debug builds
+# Builds de débogage
 gcc -g -fsanitize=address,undefined -o essay_dbg essay.c
 gcc -g -fsanitize=address,undefined -o version_dbg version.c
 gcc -g -fsanitize=address,undefined -o TP2_dbg TP2.c
 ```
 
-### Token Reference
+### Référence des Tokens
 
-| Token | Display Name | Example |
-|-------|--------------|---------|
-| Keyword | `BEGIN` etc. | `begin`, `END` |
-| Identifier | `ID` | `x`, `var1` |
-| Integer | `INTLITERAL` | `52`, `0` |
-| Float | `FLOATLITERAL` | `13.7`, `5e-2` |
-| Assignment | `ASSIGNOP` | `:=` |
-| Plus / Minus | `PLUSOP` / `MINUSOP` | `+`, `-` |
-| Parens | `LPAREN` / `RPAREN` | `(`, `)` |
-| Semicolon | `SEMICOLON` | `;` |
-| Comma | `COMMA` | `,` |
+| Token | Nom d'Affichage | Exemple |
+|-------|-----------------|---------|
+| Mot-clé | `BEGIN` etc. | `begin`, `END` |
+| Identificateur | `ID` | `x`, `var1` |
+| Entier | `INTLITERAL` | `52`, `0` |
+| Flottant | `FLOATLITERAL` | `13.7`, `5e-2` |
+| Affectation | `ASSIGNOP` | `:=` |
+| Plus / Moins | `PLUSOP` / `MINUSOP` | `+`, `-` |
+| Parenthèses | `LPAREN` / `RPAREN` | `(`, `)` |
+| Point-virgule | `SEMICOLON` | `;` |
+| Virgule | `COMMA` | `,` |
 | EOF | `SCANEOF` | — |
 
-### Common Issues
+### Problèmes Courants
 
-| Issue | Solution |
-|-------|----------|
-| `WRITE` not recognized | Add `to_maj()` for case-insensitivity |
-| `13.7` split into two tokens | Enable float support in scanner |
-| Buffer overflow | Increase `MAX_RESULT` / `MAX_MSG` or bounds-check |
-| Cascading syntax errors | Implement panic-mode recovery |
+| Problème | Solution |
+|----------|----------|
+| `WRITE` non reconnu | Ajouter `to_maj()` pour l'insensibilité à la casse |
+| `13.7` divisé en deux tokens | Activer le support des flottants dans le scanner |
+| Débordement de tampon | Augmenter `MAX_RESULT` / `MAX_MSG` ou vérifier les bornes |
+| Erreurs syntaxiques en cascade | Implémenter la récupération en mode panique |
 
 ---
 
 <div align="center">
 
-**⭐ Star this repository if you find it useful! ⭐**
+**⭐ Star ce dépôt si tu le trouves utile ! ⭐**
 
-*Made with ❤️ for compiler construction education*
+*Fait avec ❤️ pour l'enseignement de la construction de compilateurs*
 
-[Back to Top](#micro-language-compiler--lexical--syntactic-analyzer)
+[Retour en Haut](#compilateur-du-langage-micro--analyseur-lexical-et-syntaxique)
 
 </div>
