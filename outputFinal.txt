@@ -1,0 +1,61 @@
+===== RESULTAT DE L'ANALYSE LEXICALE =====
+BEGIN
+WRITE LPAREN ID COMMA LPAREN INTLITERAL PLUSOP INTLITERAL FLOATLITERAL RPAREN COMMA RPAREN SEMICOLON
+READ LPAREN ID RPAREN SEMICOLON
+ID FLOATLITERAL PLUSOP LPAREN INTLITERAL MINUSOP INTLITERAL
+WRITE LPAREN LPAREN ID RPAREN COMMA COMMA COMMA RPAREN SEMICOLON
+ID ASSIGNOP SEMICOLON
+READ LPAREN ID COMMA ID COMMA COMMA RPAREN SEMICOLON
+WRITE LPAREN LPAREN INTLITERAL PLUSOP INTLITERAL RPAREN MINUSOP INTLITERAL COMMA ASSIGNOP COMMA INTLITERAL RPAREN SEMICOLON
+WRITE LPAREN PLUSOP PLUSOP COMMA ID PLUSOP ID RPAREN SEMICOLON
+READ LPAREN ID COMMA ID SEMICOLON
+READ LPAREN ID COMMA COMMA COMMA ID RPAREN
+WRITE LPAREN ASSIGNOP COMMA INTLITERAL PLUSOP INTLITERAL RPAREN SEMICOLON
+ID SEMICOLON
+ID ASSIGNOP INTLITERAL ASSIGNOP INTLITERAL SEMICOLON
+END SCANEOF SCANEOF
+
+===== RESULTAT DE L'ANALYSE SYNTAXIQUE =====
+Nombre d'erreurs : 28
+Trouve FLOATLITERAL au lieu de RPAREN
+Erreur de syntaxe ligne 2 : attendu RPAREN
+Trouve FLOATLITERAL au lieu de RPAREN
+Erreur de syntaxe ligne 2 : attendu RPAREN
+Trouve FLOATLITERAL au lieu de SEMICOLON
+Erreur de syntaxe ligne 2 : attendu SEMICOLON
+Erreur de syntaxe ligne 2 : expression manquante
+Erreur de syntaxe ligne 2 : expression manquante
+Erreur de syntaxe ligne 2 : expression manquante
+Erreur de syntaxe ligne 2 : expression manquante
+Erreur lexicale ligne 2 : caractere inconnu '#'
+Erreur de syntaxe ligne 2 : expression manquante
+Erreur lexicale ligne 4 : caractere inconnu '='
+Trouve FLOATLITERAL au lieu de ASSIGNOP
+Erreur de syntaxe ligne 4 : attendu ASSIGNOP
+Trouve WRITE au lieu de RPAREN
+Erreur de syntaxe ligne 5 : attendu RPAREN
+Trouve WRITE au lieu de SEMICOLON
+Erreur de syntaxe ligne 5 : attendu SEMICOLON
+Erreur de syntaxe ligne 7 : attendu ID
+Erreur de syntaxe ligne 7 : attendu ID
+Trouve ASSIGNOP (inattendu)
+Erreur de syntaxe ligne 8 : expression manquante
+Trouve PLUSOP (inattendu)
+Erreur de syntaxe ligne 9 : expression manquante
+Trouve PLUSOP (inattendu)
+Erreur de syntaxe ligne 9 : expression manquante
+Trouve SEMICOLON au lieu de RPAREN
+Erreur de syntaxe ligne 10 : attendu RPAREN
+Erreur de syntaxe ligne 11 : attendu ID
+Erreur de syntaxe ligne 11 : attendu ID
+Trouve WRITE au lieu de SEMICOLON
+Erreur de syntaxe ligne 12 : attendu SEMICOLON
+Trouve ASSIGNOP (inattendu)
+Erreur de syntaxe ligne 12 : expression manquante
+Trouve SEMICOLON au lieu de ASSIGNOP
+Erreur de syntaxe ligne 13 : attendu ASSIGNOP
+Trouve ASSIGNOP au lieu de SEMICOLON
+Erreur de syntaxe ligne 14 : attendu SEMICOLON
+Erreur de syntaxe ligne 14 : expression manquante
+Erreur de syntaxe ligne 14 : expression manquante
+Erreur de syntaxe ligne 14 : expression manquante

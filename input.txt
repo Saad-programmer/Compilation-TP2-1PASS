@@ -1,0 +1,15 @@
+BEGIN
+WRITE (var1 ,(5+13.7), )#;
+READ (var1);
+V1 = 5e-2 + (120 - 56
+WRITE( (hello) , , , );
+var :=  ;
+READ (a,b, , );
+write((1+2)-7,:=,9);
+write(++,a+b);
+read(a,b;
+read(a,,,b)
+write(:=,1+2);
+var;
+var:=6:=9;
+END
